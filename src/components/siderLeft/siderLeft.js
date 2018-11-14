@@ -41,7 +41,9 @@ class SiderLeft extends Component {
             <Menu.Item key="10" className="left-opacity-05">
               <Link to="/yearService">包年服务</Link>
             </Menu.Item>
-            <Menu.Item key="11" className="left-opacity-05">自定义服务</Menu.Item>
+            <Menu.Item key="11" className="left-opacity-05">
+              <Link to="/customService">自定义服务</Link>
+            </Menu.Item>
           </SubMenu>
           <SubMenu key="sub4" title={<span className="left-opacity-05"><Icon type="setting" theme="outlined" />管理</span>}>
             <Menu.Item key="12" className="left-opacity-05">option9</Menu.Item>

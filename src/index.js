@@ -14,6 +14,7 @@ import {
   About,
   RegisterRecord,
   YearService,
+  CustomService,
 } from './routes/routes';
 import List from './containers/list';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
@@ -33,6 +34,7 @@ export default class Index extends Component {
               <Route path="/list" component={List} />
               <Route path="/record" component={RegisterRecord} />
               <Route path="/yearService" component={YearService} />
+              <Route path="/customService" component={CustomService} />
             </div>
           </Router>
         </Provider>
