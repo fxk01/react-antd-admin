@@ -29,7 +29,7 @@ class CustomTem extends Component {
       <Content className="record-content customTem" style={{marginTop: this.props.titleText.mt}}>
         <div className="flex flex-justify-between" style={{margin: '20px 45px 0 0'}}>
           <p className="record-searchText">{this.props.titleText.title}</p>
-          <Button className="record-newBn" type="primary" size={this.state.size}>新建模版</Button>
+          <Button className="record-newBn" type="primary" onClick={() => this.props.showModal()} size={this.state.size}>新建模版</Button>
         </div>
         <div style={{ margin: '0 45px 44px 45px'}}>
           <Table rowSelection={rowSelection} columns={this.props.columns} dataSource={this.props.data} />

@@ -42,6 +42,7 @@
     "postcss-loader": "3.0.0",
     "postcss-preset-env": "6.0.6",
     "postcss-safe-parser": "4.0.1",
+    "prop-types": "^15.6.2",
     "react": "^16.5.2",
     "react-app-polyfill": "^0.1.3",
     "react-dev-utils": "^6.0.4",
@@ -114,11 +115,17 @@
   "babel": {
     "presets": [
       "react-app"
+    ],
+    "plugins": [
+      ["@babel/plugin-proposal-decorators", { "legacy": true }],
+      ["@babel/plugin-proposal-class-properties", { "loose" : true }]
     ]
   },
   "devDependencies": {
+    "@babel/plugin-proposal-decorators": "^7.1.6",
     "@babel/preset-react": "^7.0.0",
     "babel-plugin-import": "^1.9.1",
+    "babel-plugin-transform-decorators-legacy": "^1.3.5",
     "babel-polyfill": "^6.26.0",
     "babel-preset-es2015": "^6.24.1",
     "es6-promise": "^4.2.5",
