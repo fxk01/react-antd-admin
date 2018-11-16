@@ -1,4 +1,71 @@
 .login {
   background: #f2f6fc;
   height: 100%;
+  .login-centerW100 {
+    width: 100%;
+  }
+  .login-center {
+    width: 510px;
+    height: 556px;
+    -moz-box-shadow:2px 4px 16px #B0BCE3;
+    -webkit-box-shadow:2px 4px 16px #B0BCE3;
+    box-shadow:2px 4px 16px #B0BCE3;
+    background-color: #ffffff;
+  }
+  .login-form {
+    margin: 0 84px;
+    label {
+      position: absolute;
+      left: 0;
+      top: -13px;
+      font-size: 20px;
+      transition: all 0.2s;
+      pointer-events: none;
+      color: #8e8e8e;
+    }
+  }
+  .login-center-h1 {
+    font-size: 26px;
+    color: #242a33;
+    margin: 65px 0 75px 0;
+  }
+  .login-form-button {
+    border-radius: 4px;
+    background-color: #355ee2;
+    border-color: #355ee2;
+    width: 340px;
+    height: 60px;
+    font-size: 26px;
+  }
+  .ant-input {
+    border-radius: 0;
+    transition: all 0.3s;
+    border: inherit;
+    border-bottom: 1px solid #bfbfbf;
+    padding: 0;
+    font-size: 16px;
+    color: #242a33;
+  }
+  .ant-input:hover {
+    border-color: #355ee2;
+  }
+  .login-form-forgot {
+    font-size: 16px;
+    color: #355ee2;
+  }
+  .login-form-pas {
+    font-size: 16px;
+    color: #8e8e8e;
+  }
+  #userName::-webkit-input-placeholder, #password::-webkit-input-placeholder{
+    font-size: 20px;
+    color: #8e8e8e;
+  }
+  #userName:focus, #password:focus{
+    border-color: #355ee2;
+    outline: 0;
+    -webkit-box-shadow: 0 0 0 2px rgba(255, 255, 255, 1);
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 1);
+    border-right-width: 1px !important;
+  }
 }

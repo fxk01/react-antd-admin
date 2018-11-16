@@ -10,6 +10,7 @@ import { LocaleProvider } from 'antd';
 import zh_CN from 'antd/lib/locale-provider/zh_CN';
 import 'moment/locale/zh-cn';
 import {
+  App,
   About,
   RegisterRecord,
   YearService,
@@ -30,7 +31,8 @@ export default class Index extends Component {
         <Provider store={store}>
           <Router>
             <div style={{height: '100%'}}>
-              <Route exact path="/" component={Login} />
+              <Route exact path="/" component={App} />
+              <Route exact path="/login" component={Login} />
               <Route path="/about" component={About} />
               <Route path="/list" component={List} />
               <Route path="/record" component={RegisterRecord} />
