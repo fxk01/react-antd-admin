@@ -6,7 +6,9 @@ import React, { Component } from 'react';
 import { Form, Input, Button } from 'antd';
 import '../styles/login.less';
 import { Motion, spring, presets } from 'react-motion'
-import { Link } from "react-router-dom";
+import { userLogin, logOut } from '../actions/login-actions';
+import { connect } from 'react-redux'
+import { Link, withRouter } from 'react-router-dom';
 
 const FormItem = Form.Item;
 
@@ -21,11 +23,20 @@ class Login extends Component {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    if(nextProps.userLoginData.status === '200') {
+      this.props.history.push('/record')
+    }else {
+
+    }
+    console.log(nextProps.userLoginData)
+  }
+
   handleSubmit(e) {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
-      if (!err) {
-        console.log('Received values of form: ', values);
+      if(!err) {
+        this.props.userLogin(values);
       }
     });
   };
@@ -86,10 +97,9 @@ class Login extends Component {
           <div className="login-center">
             <h1 className="tlCen login-center-h1">积募服务管理平台</h1>
 
-
             <Form onSubmit={this.handleSubmit.bind(this)} className="login-form">
               <FormItem style={{marginBottom: '55px'}}>
-                {getFieldDecorator('userName', {
+                {getFieldDecorator('username', {
                   rules: [{ required: true, message: '账户不能为空!' }],
                 })(
                   <Input onFocus={(e) => this.placeHandler(e, 'text')} onBlur={(e) => this.placeHandler(e, 'text')} type="text" placeholder="" />
@@ -132,8 +142,6 @@ class Login extends Component {
                 </div>
               </FormItem>
             </Form>
-
-
           </div>
         </main>
       </div>
@@ -141,6 +149,23 @@ class Login extends Component {
   }
 }
 
-export default Form.create()(
-  Login
-);
+const mapStateToProps = (state) => {
+  return state.loginReducerData
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    userLogin:(res) => {
+      dispatch(userLogin(res))
+    },
+    logOut:(res) => {
+      dispatch(logOut(res))
+    }
+  }
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Form.create()(
+  withRouter(Login)
+));

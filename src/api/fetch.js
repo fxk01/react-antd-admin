@@ -1,6 +1,6 @@
 import { fetch as fetchPolyfill } from 'whatwg-fetch'
 import 'es6-promise'
-const urlCom = 'http://sdx.hefupb.com/';
+const urlCom = 'http://192.168.10.182:8092/';
 
 export default {
   fetchPost(url, params = {}) {
@@ -21,8 +21,10 @@ export default {
         },
         body: result,
       }).then((response) => {
+        console.log(response)
         return response.json();
       }).then((data) => {
+        console.log(data)
         resolve(data);
       }).catch(error => {
         reject(error);

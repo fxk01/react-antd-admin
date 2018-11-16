@@ -4,7 +4,7 @@
 
 import React, { Component } from 'react';
 import { Layout, Modal, Button, Input } from 'antd';
-import { withRouter } from "react-router-dom";
+import { withRouter } from 'react-router-dom';
 import '../styles/customService.less';
 import Top from '../components/top/top';
 import SiderLeft from '../components/siderLeft/siderLeft';

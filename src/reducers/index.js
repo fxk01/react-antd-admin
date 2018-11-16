@@ -1,8 +1,10 @@
 import { combineReducers } from 'redux';
 import aboutReducer from './about-reducer';
+import loginReducer from './login-reducer';
 
 const allReducers = {
-  aboutReducerData: aboutReducer
+  aboutReducerData: aboutReducer,
+  loginReducerData: loginReducer,
 };
 
 const appReducer = combineReducers(allReducers);
