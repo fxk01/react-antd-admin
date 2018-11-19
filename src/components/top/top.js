@@ -5,6 +5,7 @@
 import React, { Component } from 'react';
 import { Layout, Input } from 'antd';
 import './top.less';
+import cookie from 'react-cookies'
 import ld from '../../assets/svg/ld.svg';
 import setting from '../../assets/svg/setting.svg';
 
@@ -33,7 +34,7 @@ class Top extends Component {
               <img src={setting} className="block" alt="setting" />
             </li>
             <li className="flex flex-align-center">
-              HajNcs
+              {cookie.load('name')}
             </li>
             <li className="flex flex-align-center">
               <img src={require('../../assets/img/jm.png')} className="block" alt="setting" />

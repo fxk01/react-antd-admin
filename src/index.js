@@ -43,7 +43,6 @@ export default class Index extends Component {
           </Router>
         </Provider>
       </LocaleProvider>
-
     )
   }
 }

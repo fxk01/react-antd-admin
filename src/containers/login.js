@@ -3,18 +3,19 @@
  */
 
 import React, { Component } from 'react';
-import { Form, Input, Button } from 'antd';
+import { Form, Input, Button, message } from 'antd';
 import '../styles/login.less';
 import { Motion, spring, presets } from 'react-motion'
-import { userLogin, logOut } from '../actions/login-actions';
+import { userLogin, removeLogin } from '../actions/login-actions';
+import cookie from 'react-cookies';
 import { connect } from 'react-redux'
 import { Link, withRouter } from 'react-router-dom';
 
 const FormItem = Form.Item;
 
 class Login extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       top: 0,
       fontSize: 20,
@@ -25,11 +26,15 @@ class Login extends Component {
 
   componentWillReceiveProps(nextProps) {
     if(nextProps.userLoginData.status === '200') {
-      this.props.history.push('/record')
-    }else {
-
+      const realName = nextProps.userLoginData.user.realName;
+      cookie.save('name', realName, { path: '/' });
+      this.props.history.push('/record');
+    }else if(nextProps.userLoginData.status === '500') {
+      message.destroy();
+      message.info(nextProps.userLoginData.message, 2.5, () => {
+        this.props.removeLogin();
+      })
     }
-    console.log(nextProps.userLoginData)
   }
 
   handleSubmit(e) {
@@ -157,9 +162,9 @@ const mapDispatchToProps = (dispatch) => {
     userLogin:(res) => {
       dispatch(userLogin(res))
     },
-    logOut:(res) => {
-      dispatch(logOut(res))
-    }
+    removeLogin:(res) => {
+      dispatch(removeLogin(res))
+    },
   }
 };
 

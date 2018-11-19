@@ -21,10 +21,8 @@ export default {
         },
         body: result,
       }).then((response) => {
-        console.log(response)
         return response.json();
       }).then((data) => {
-        console.log(data)
         resolve(data);
       }).catch(error => {
         reject(error);

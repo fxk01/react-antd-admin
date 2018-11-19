@@ -1,7 +1,7 @@
 import * as about from '../api/login';
 
 export const USER_LOGIN = 'USER_LOGIN';
-export const USER_LOGOUT = 'USER_LOGOUT';
+export const REMOVE_LOGIN = 'REMOVE_LOGIN';
 
 export function userLogin(data) {
   return function(dispatch) {
@@ -14,12 +14,11 @@ export function userLogin(data) {
   }
 }
 
-
-export function logOut(data) {
+export function removeLogin() {
   return function(dispatch) {
     dispatch({
-      type: USER_LOGOUT,
-      payload: data,
+      type: REMOVE_LOGIN,
+      payload: {},
     });
   }
 }
