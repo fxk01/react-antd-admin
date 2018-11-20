@@ -32,6 +32,9 @@ ol, ul, dl {
 .mg0 {
   margin: 0;
 }
+.mb30 {
+  margin-bottom: 30px;
+}
 /*flex*/
 .flex{
   display: flex;
@@ -115,4 +118,7 @@ ol, ul, dl {
   -ms-flex-align: flex-end;
   -ms-grid-row-align: flex-end;
   align-items: flex-end;
+}
+.flex-wrap{
+  flex-wrap: wrap;
 }

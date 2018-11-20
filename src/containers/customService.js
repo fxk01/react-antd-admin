@@ -3,8 +3,12 @@
  */
 
 import React, { Component } from 'react';
-import { Layout, Modal, Button, Input, Select } from 'antd';
+import { Layout, Modal, Button, Input, Select, message } from 'antd';
 import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { queryTemplateByName, createTemplate } from '../actions/customService-actions';
+import { logOut } from '../actions/about-actions';
+import hoc from '../utils/hoc';
 import '../styles/customService.less';
 import Top from '../components/top/top';
 import SiderLeft from '../components/siderLeft/siderLeft';
@@ -24,6 +28,7 @@ function handleChange(value) {
   console.log(`selected ${value}`);
 }
 
+@hoc
 class CustomService extends Component {
   constructor() {
     super();
@@ -69,6 +74,7 @@ class CustomService extends Component {
       visible: false,
       visibleUse: false,
       temNameValue: '',
+      ifTem: false,
     };
     this.showModal = this.showModal.bind(this);
     this.showModalUse = this.showModalUse.bind(this);
@@ -76,7 +82,23 @@ class CustomService extends Component {
     this.handleOkUse = this.handleOkUse.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.handleCancelUse = this.handleCancelUse.bind(this);
-    this.getTemValue = this.getTemValue.bind(this);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if(nextProps.customServiceData.exist) {
+      message.info('模版名称已存在', 2.5);
+    } else if(nextProps.createTemData.status === '200') {
+      this.setState({
+        loading: false,
+        visible: false
+      });
+      let codeVal = encodeURIComponent(this.state.temNameValue);
+      this.props.history.push(`/customDetail?val=${codeVal}&id=${nextProps.createTemData.templateId}`);
+    }
+  }
+
+  componentWillUnmount() {
+    this.props.logOut();
   }
 
   showModal() {
@@ -92,13 +114,15 @@ class CustomService extends Component {
   }
 
   handleOk() {
-    this.setState({ loading: true });
-    let codeVal = encodeURIComponent(this.state.temNameValue);
-    setTimeout(() => {
-      this.setState({ loading: false, visible: false });
-      window.open(`/customDetail?val=${codeVal}`, '_blank');
-      // this.props.history.push('/customDetail?tab=2');
-    }, 1000);
+    if(this.props.customServiceData.exist) {
+      message.destroy();
+      message.info('模版名称已存在', 2.5);
+    } else {
+      this.setState({ loading: true });
+      this.props.createTemplate({
+        name: this.state.temNameValue
+      })
+    }
   };
 
   handleOkUse() {
@@ -113,11 +137,12 @@ class CustomService extends Component {
     this.setState({ visibleUse: false });
   }
 
-  getTemValue(e) {
+  getTemValue = this.debounce((e) => {
+    this.props.queryTemplateByName({name: e.target.value});
     this.setState({
       temNameValue: e.target.value
     });
-  };
+  });
 
   render() {
     const { visible, visibleUse, loading } = this.state;
@@ -174,7 +199,7 @@ class CustomService extends Component {
           ]}
         >
           <div className="flex flex-align-baseline">
-            <p style={{width: '100px', margin: 0}}>模版名称：</p>
+            <label style={{width: '100px', margin: 0}}>模版名称：</label>
             <Input size="large" placeholder="" onChange={this.getTemValue} />
           </div>
         </Modal>
@@ -194,4 +219,24 @@ class CustomService extends Component {
   }
 }
 
-export default withRouter(CustomService);
+const mapStateToProps = (state) => {
+  return state.customServiceReducerData
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    queryTemplateByName: (res) => {
+      dispatch(queryTemplateByName(res))
+    },
+    createTemplate: (res) => {
+      dispatch(createTemplate(res))
+    },
+    logOut: (res) => {
+      dispatch(logOut(res))
+    },
+  }
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(withRouter(CustomService));

@@ -1,10 +1,11 @@
 import { combineReducers } from 'redux';
 import aboutReducer from './about-reducer';
 import loginReducer from './login-reducer';
-
+import customServiceReducer from './customService-reducer';
 const allReducers = {
   aboutReducerData: aboutReducer,
   loginReducerData: loginReducer,
+  customServiceReducerData: customServiceReducer,
 };
 
 const appReducer = combineReducers(allReducers);

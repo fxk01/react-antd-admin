@@ -22,6 +22,16 @@ function hoc(target) {
       }
     }
   };
+  target.prototype.debounce = function(func, wait=500) {
+    let timeout;
+    return function(event) {
+      clearTimeout(timeout);
+      event.persist && event.persist();
+      timeout = setTimeout(()=>{
+        func(event)
+      }, wait);
+    };
+  };
   return target;
 }
 

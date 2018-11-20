@@ -8,7 +8,7 @@ import '../styles/login.less';
 import { Motion, spring, presets } from 'react-motion'
 import { userLogin, removeLogin } from '../actions/login-actions';
 import cookie from 'react-cookies';
-import { connect } from 'react-redux'
+import { connect } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
 
 const FormItem = Form.Item;
