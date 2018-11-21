@@ -36,13 +36,13 @@ class SiderLeft extends Component {
           </SubMenu>
           <SubMenu key="sub3" title={<span className="left-opacity-05"><Icon type="setting" theme="outlined" />服务</span>}>
             <Menu.Item key="9" className="left-opacity-05">
-              <Link to="/record">登记备案</Link>
+              <Link to="/record" replace>登记备案</Link>
             </Menu.Item>
             <Menu.Item key="10" className="left-opacity-05">
-              <Link to="/yearService">包年服务</Link>
+              <Link to="/yearService" replace>包年服务</Link>
             </Menu.Item>
             <Menu.Item key="11" className="left-opacity-05">
-              <Link to="/customService">自定义服务</Link>
+              <Link to="/customService" replace>自定义服务</Link>
             </Menu.Item>
           </SubMenu>
           <SubMenu key="sub4" title={<span className="left-opacity-05"><Icon type="setting" theme="outlined" />管理</span>}>

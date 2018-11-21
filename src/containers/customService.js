@@ -75,6 +75,7 @@ class CustomService extends Component {
       visibleUse: false,
       temNameValue: '',
       ifTem: false,
+      isFetching: false,
     };
     this.showModal = this.showModal.bind(this);
     this.showModalUse = this.showModalUse.bind(this);
@@ -85,8 +86,11 @@ class CustomService extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if(nextProps.customServiceData.exist) {
+    if(this.state.isFetching && nextProps.customServiceData.exist) {
       message.info('模版名称已存在', 2.5);
+      this.setState({
+        isFetching: false,
+      });
     } else if(nextProps.createTemData.status === '200') {
       this.setState({
         loading: false,
@@ -114,6 +118,11 @@ class CustomService extends Component {
   }
 
   handleOk() {
+    if(this.state.temNameValue === '') {
+      message.destroy();
+      message.info('模版名称不能为空！', 2.5);
+      return false;
+    }
     if(this.props.customServiceData.exist) {
       message.destroy();
       message.info('模版名称已存在', 2.5);
@@ -140,7 +149,8 @@ class CustomService extends Component {
   getTemValue = this.debounce((e) => {
     this.props.queryTemplateByName({name: e.target.value});
     this.setState({
-      temNameValue: e.target.value
+      temNameValue: e.target.value,
+      isFetching: true,
     });
   });
 

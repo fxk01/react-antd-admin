@@ -19,7 +19,7 @@ import {
   Login
 } from './routes/routes';
 import List from './containers/list';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { HashRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import * as serviceWorker from './serviceWorker';
 import store from './store';
@@ -29,8 +29,8 @@ export default class Index extends Component {
     return (
       <LocaleProvider locale={zh_CN}>
         <Provider store={store}>
-          <Router>
-            <div style={{height: '100%'}}>
+          <HashRouter>
+            <Switch>
               <Route exact path="/" component={App} />
               <Route exact path="/login" component={Login} />
               <Route path="/about" component={About} />
@@ -39,8 +39,9 @@ export default class Index extends Component {
               <Route path="/yearService" component={YearService} />
               <Route path="/customService" component={CustomService} />
               <Route path="/customDetail" component={CustomDetail} />
-            </div>
-          </Router>
+              <Redirect to="/" />
+            </Switch>
+          </HashRouter>
         </Provider>
       </LocaleProvider>
     )
