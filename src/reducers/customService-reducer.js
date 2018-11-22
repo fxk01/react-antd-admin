@@ -1,11 +1,13 @@
 import {
   QUERY_TEMPLATE,
   CREATE_TEMPLATE,
+  QUERY_ALL_TEM,
 } from '../actions/customService-actions';
 
 const initialState = {
   customServiceData: {},
   createTemData: {},
+  queryAllTemData: {},
 };
 
 export default function(state = initialState, action) {
@@ -20,6 +22,11 @@ export default function(state = initialState, action) {
       return {
         ...state,
         createTemData: action.payload,
+      }
+    }
+    case QUERY_ALL_TEM: {
+      return {
+        
       }
     }
     default:

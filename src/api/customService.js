@@ -9,3 +9,8 @@ export const queryTemplateByName = (params) => {
 export const createTemplate = (params) => {
   return http.fetchPost('template/createTemplate', params)
 };
+
+//查询所有模版
+export const queryAlltemplate = (params) => {
+  return http.fetchPost('template/queryAlltemplate', params)
+};

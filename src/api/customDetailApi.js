@@ -9,3 +9,8 @@ export const queryTemplateRefInfo = (params) => {
 export const createNodes = (params) => {
   return http.fetchPost('template/createNodes', params)
 };
+
+//创建当前节点所属的事件
+export const createEvents = (params) => {
+  return http.fetchPost('template/createEvents', params)
+};

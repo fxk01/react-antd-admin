@@ -1,13 +1,17 @@
 import {
   CREATE_NODES,
-  QUERY_NODES
+  QUERY_NODES,
+  CREATE_EVENT_NODES,
 } from '../actions/customDetail-actions';
 
 const initialState = {
-  nodeData: {},
+  nodeData: {
+    nodes: []
+  },
   queryNodeData: {
     nodes: []
-  }
+  },
+  eventNodeData: {}
 };
 
 export default function(state = initialState, action) {
@@ -19,9 +23,17 @@ export default function(state = initialState, action) {
       }
     }
     case QUERY_NODES: {
+      const { nodeData } = state;
+      [...nodeData.nodes] = action.payload.nodes || [];
       return {
         ...state,
-        queryNodeData: action.payload,
+        queryNodeData: Object.assign({}, state.queryNodeData, action.payload)
+      }
+    }
+    case CREATE_EVENT_NODES: {
+      return {
+        ...state,
+        eventNodeData: action.payload,
       }
     }
     default:

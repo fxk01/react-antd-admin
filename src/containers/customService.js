@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import { Layout, Modal, Button, Input, Select, message } from 'antd';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { queryTemplateByName, createTemplate } from '../actions/customService-actions';
+import { queryTemplateByName, createTemplate, queryAlltemplate } from '../actions/customService-actions';
 import { logOut } from '../actions/about-actions';
 import hoc from '../utils/hoc';
 import '../styles/customService.less';
@@ -83,6 +83,13 @@ class CustomService extends Component {
     this.handleOkUse = this.handleOkUse.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.handleCancelUse = this.handleCancelUse.bind(this);
+  }
+
+  componentDidMount() {
+    // this.props.queryAlltemplate({
+    //   page: 1,
+    //   pageSize: 10
+    // })
   }
 
   componentWillReceiveProps(nextProps) {
@@ -239,6 +246,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     createTemplate: (res) => {
       dispatch(createTemplate(res))
+    },
+    queryAlltemplate: (res) => {
+      dispatch(queryAlltemplate(res))
     },
     logOut: (res) => {
       dispatch(logOut(res))

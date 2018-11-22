@@ -31,9 +31,8 @@ class Login extends Component {
       this.props.history.push('/record');
     }else if(nextProps.userLoginData.status === '500') {
       message.destroy();
-      message.info(nextProps.userLoginData.message, 2.5, () => {
-        this.props.removeLogin();
-      })
+      message.info(nextProps.userLoginData.message, 2.5);
+      this.props.removeLogin();
     }
   }
 
