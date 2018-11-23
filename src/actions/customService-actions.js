@@ -5,6 +5,7 @@ export const CREATE_TEMPLATE = 'CREATE_TEMPLATE';
 export const QUERY_ALL_TEMPLATE = 'QUERY_ALL_TEMPLATE';
 export const QUERY_ADMIN = 'QUERY_ADMIN';
 export const QUERY_CUSTLIST = 'QUERY_CUSTLIST';
+export const DELETE_TEMPLATE = 'DELETE_TEMPLATE';
 
 export function queryTemplateByName(data) {
   return function(dispatch) {
