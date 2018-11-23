@@ -14,3 +14,13 @@ export const createTemplate = (params) => {
 export const queryAlltemplate = (params) => {
   return http.fetchPost('template/queryAlltemplate', params)
 };
+
+//查询所有管理员(负责人)
+export const queryAdminList = (params) => {
+  return http.fetchPost('admin/queryAdminList', params)
+};
+
+//查询公司信息(关联公司)
+export const queryCustList = (params) => {
+  return http.fetchPost('cust/queryCustList', params)
+};

@@ -9,3 +9,4 @@ export { default as YearService } from '../containers/yearService';
 export { default as CustomService } from '../containers/customService';
 export { default as CustomDetail } from '../containers/customDetail';
 export { default as Login } from '../containers/login';
+export { default as UseTemplate } from '../containers/useTemplate';

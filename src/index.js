@@ -16,7 +16,8 @@ import {
   YearService,
   CustomService,
   CustomDetail,
-  Login
+  Login,
+  UseTemplate
 } from './routes/routes';
 import List from './containers/list';
 import { HashRouter, Switch, Route, Redirect } from 'react-router-dom';
@@ -39,6 +40,7 @@ export default class Index extends Component {
               <Route path="/yearService" component={YearService} />
               <Route path="/customService" component={CustomService} />
               <Route path="/customDetail" component={CustomDetail} />
+              <Route path="/useTemplate" component={UseTemplate} />
               <Redirect to="/" />
             </Switch>
           </HashRouter>

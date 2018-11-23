@@ -9,6 +9,7 @@ const initialState = {
     nodes: []
   },
   queryNodeData: {
+    isFetching: false,
     nodes: []
   },
   eventNodeData: {}
@@ -27,7 +28,9 @@ export default function(state = initialState, action) {
       [...nodeData.nodes] = action.payload.nodes || [];
       return {
         ...state,
-        queryNodeData: Object.assign({}, state.queryNodeData, action.payload)
+        queryNodeData: Object.assign({}, state.queryNodeData, action.payload, {
+          isFetching: !state.queryNodeData.isFetching
+        })
       }
     }
     case CREATE_EVENT_NODES: {

@@ -6,7 +6,13 @@ import React, { Component } from 'react';
 import { Layout, Modal, Button, Input, Select, message } from 'antd';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { queryTemplateByName, createTemplate, queryAlltemplate } from '../actions/customService-actions';
+import {
+  queryTemplateByName,
+  createTemplate,
+  queryAlltemplate,
+  queryAdminList,
+  queryCustList,
+} from '../actions/customService-actions';
 import { logOut } from '../actions/about-actions';
 import hoc from '../utils/hoc';
 import '../styles/customService.less';
@@ -14,18 +20,25 @@ import Top from '../components/top/top';
 import SiderLeft from '../components/siderLeft/siderLeft';
 import CustomTem from '../components/customTem/customTem';
 
-const data = [];
 const Option = Select.Option;
-for (let i = 0; i < 3; i++) {
-  data.push({
-    key: i,
-    name: `名称${i}`,
-    service: `服务${i}`,
-  });
-}
 
 function handleChange(value) {
   console.log(`selected ${value}`);
+}
+
+function CustomList(props) {
+  return (
+    <ul className="custom-tem-listUl mg0">
+      {props.data.map((todo, index) =>
+        <li key={todo.id}>
+          <div className="custom-temItems">
+            {todo.name}
+          </div>
+          {props.data.length > 1 && index + 1 < props.data.length ? <img src={require('../assets/img/xy_jinatou.png')} alt="" style={{margin: '0 5px'}}/> : ''}
+        </li>
+      )}
+    </ul>
+  );
 }
 
 @hoc
@@ -42,13 +55,28 @@ class CustomService extends Component {
         align: 'center',
         className: 'record-event-cs',
         title: '服务',
-        dataIndex: 'service',
+        dataIndex: 'nodeList',
+        render: (todo) => {
+          let start, end;
+          if(todo.length > 4) {
+            let [...todoArr] = todo;
+            start = todoArr.slice(0, 2);
+            end = todoArr.slice(-2);
+          }
+          return (
+            <ul className="custom-tem-listUl mg0">
+              {todo.length < 5 ? (
+                <CustomList data={todo}/>
+              ) : <CustomList data={start.concat(end)}/>}
+            </ul>
+          )
+        }
       }, {
         align: 'center',
         className: 'record-event-cs',
         title: '操作',
         dataIndex: 'operation',
-        render: (text, record) => {
+        render: () => {
           return (
             <div>
               <span className="event-xg">复制</span><span className="event-xg event-xg-mp10">|</span>
@@ -64,7 +92,8 @@ class CustomService extends Component {
       },
       titleText: {
         mt: 0,
-        title: '登记备案模版',
+        title: '模版集合',
+        // title: '登记备案模版',
       },
       titleText2: {
         mt: '40px',
@@ -76,6 +105,7 @@ class CustomService extends Component {
       temNameValue: '',
       ifTem: false,
       isFetching: false,
+      loadingTable: true,
     };
     this.showModal = this.showModal.bind(this);
     this.showModalUse = this.showModalUse.bind(this);
@@ -83,13 +113,16 @@ class CustomService extends Component {
     this.handleOkUse = this.handleOkUse.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.handleCancelUse = this.handleCancelUse.bind(this);
+    this.changePageSize = this.changePageSize.bind(this);
   }
 
   componentDidMount() {
-    // this.props.queryAlltemplate({
-    //   page: 1,
-    //   pageSize: 10
-    // })
+    this.props.queryAdminList();
+    this.props.queryCustList();
+    this.props.queryAlltemplate({
+      page: 1,
+      pageSize: 10
+    })
   }
 
   componentWillReceiveProps(nextProps) {
@@ -105,6 +138,11 @@ class CustomService extends Component {
       });
       let codeVal = encodeURIComponent(this.state.temNameValue);
       this.props.history.push(`/customDetail?val=${codeVal}&id=${nextProps.createTemData.templateId}`);
+    }
+    if(this.props.queryAllTemData.isFetching !== nextProps.queryAllTemData.isFetching) {
+      this.setState({
+        loadingTable: false,
+      })
     }
   }
 
@@ -153,6 +191,16 @@ class CustomService extends Component {
     this.setState({ visibleUse: false });
   }
 
+  changePageSize(page) {
+    this.setState({
+      loadingTable: true,
+    });
+    this.props.queryAlltemplate({
+      page: page.current,
+      pageSize: 10
+    });
+  }
+
   getTemValue = this.debounce((e) => {
     this.props.queryTemplateByName({name: e.target.value});
     this.setState({
@@ -163,6 +211,7 @@ class CustomService extends Component {
 
   render() {
     const { visible, visibleUse, loading } = this.state;
+    const { queryAdminData, queryCustListData } = this.props;
     return (
       <div className="customService">
         <Modal
@@ -184,20 +233,22 @@ class CustomService extends Component {
           </div>
           <div className="flex flex-align-baseline" style={{margin: '30px 0'}}>
             <p style={{width: '100px', margin: 0}}>负责人：</p>
-            <Select defaultValue="lucy" style={{width: '100%'}} onChange={handleChange}>
-              <Option value="jack">Jack</Option>
-              <Option value="lucy">Lucy</Option>
-              <Option value="disabled" disabled>Disabled</Option>
-              <Option value="Yiminghe">yiminghe</Option>
+            <Select defaultValue={queryAdminData.admins.length > 0 ? queryAdminData.admins[0].name : ''} style={{width: '100%'}} onChange={handleChange}>
+              {queryAdminData.admins.length > 0 && (
+                queryAdminData.admins.map((todo, index) =>
+                  <Option key={todo.id} value={todo.name}>{todo.name}</Option>
+                )
+              )}
             </Select>
           </div>
           <div className="flex flex-align-baseline">
             <p style={{width: '100px', margin: 0}}>关联公司：</p>
-            <Select defaultValue="lucy" style={{width: '100%'}} onChange={handleChange}>
-              <Option value="jack">Jack</Option>
-              <Option value="lucy">Lucy</Option>
-              <Option value="disabled" disabled>Disabled</Option>
-              <Option value="Yiminghe">yiminghe</Option>
+            <Select defaultValue={queryCustListData.custs.length > 0 ? queryCustListData.custs[0].name : ''} style={{width: '100%'}} onChange={handleChange}>
+              {queryCustListData.custs.length > 0 && (
+                queryCustListData.custs.map((todo, index) =>
+                  <Option key={todo.id} value={todo.name}>{todo.name}</Option>
+                )
+              )}
             </Select>
           </div>
         </Modal>
@@ -225,9 +276,16 @@ class CustomService extends Component {
           <Layout>
             <SiderLeft defaultKeys={this.state.defaultKeys} />
             <Layout style={{padding: '30px 40px 104px 40px'}}>
-              <CustomTem showModal={this.showModal} titleText={this.state.titleText} columns={this.state.columns} data={data} />
+              <CustomTem
+                showModal={this.showModal}
+                changePageSize={this.changePageSize}
+                titleText={this.state.titleText}
+                columns={this.state.columns}
+                loading={this.state.loadingTable}
+                queryAllTemData={this.props.queryAllTemData}
+              />
 
-              <CustomTem showModal={this.showModal} titleText={this.state.titleText2} columns={this.state.columns} data={data} />
+              {/*<CustomTem showModal={this.showModal} titleText={this.state.titleText2} columns={this.state.columns} data={data} />*/}
             </Layout>
           </Layout>
         </Layout>
@@ -249,6 +307,12 @@ const mapDispatchToProps = (dispatch) => {
     },
     queryAlltemplate: (res) => {
       dispatch(queryAlltemplate(res))
+    },
+    queryAdminList: (res) => {
+      dispatch(queryAdminList(res));
+    },
+    queryCustList: (res) => {
+      dispatch(queryCustList(res))
     },
     logOut: (res) => {
       dispatch(logOut(res))

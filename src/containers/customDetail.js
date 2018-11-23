@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 import hoc from '../utils/hoc';
 import Top from '../components/top/top';
 import SiderLeft from '../components/siderLeft/siderLeft';
+
 const { Content } = Layout;
 
 @hoc
@@ -43,6 +44,7 @@ class CustomDetail extends Component {
       nameRequired: true,
       isFetching: true,
     };
+    this.myRef = React.createRef();
     this.addEventNode = this.addEventNode.bind(this);
     this.createNodeList = this.createNodeList.bind(this);
     this.addEvent = this.addEvent.bind(this);
@@ -57,6 +59,7 @@ class CustomDetail extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    const node = this.myRef.current;
     if(nextProps.nodeData.status === '200') {
       this.setState({
         isFetching: false
@@ -66,6 +69,28 @@ class CustomDetail extends Component {
       this.setState({
         isFetching: false
       })
+    }
+    if(nextProps.queryNodeData.isFetching !== this.props.queryNodeData.isFetching) {
+      this.setState({
+        eventArr: [{
+          num: '一',
+          val: '',
+        }],
+      })
+    }
+    if(nextProps.nodeData.nodes.length > 0) {
+      let [...replicatedArrayNodes] = nextProps.nodeData.nodes;
+      let newArrNodes = replicatedArrayNodes.filter((item) => {
+        return item.finish !== true
+      });
+      newArrNodes.forEach((obj) => {
+        if(newArrNodes.length === 1 && obj.finish === null) {
+          node.buttonNode.innerText = '完成'
+        }
+      });
+      if(newArrNodes.length === 0) {
+        this.props.history.push('/customService');
+      }
     }
   }
 
@@ -209,7 +234,7 @@ class CustomDetail extends Component {
                       <li className="flex">
                         {this.props.nodeData.nodes.map((num, index) =>
                           <div key={num.id} style={{marginRight: '15px'}}>
-                            <div className={`nodeLiDone ${num.finish === true || index === 0 ? 'doneStyle' : null}`} data-id={num.id}>
+                            <div className={`nodeLiDone ${num.finish === true ? 'doneStyle' : null}`} data-id={num.id}>
                               {num.name}
                             </div>
                             {this.props.nodeData.nodes.length > 1 && index + 1 < this.props.nodeData.nodes.length ? <img src={require('../assets/img/rightJd.png')} alt=""/> : ''}
@@ -239,7 +264,7 @@ class CustomDetail extends Component {
                   </ul> : ''
                 }
                 <div style={{textAlign: 'center', marginTop: '60px'}}>
-                  <Button className="submitOk" onClick={this.createNodeList}>
+                  <Button className="submitOk" onClick={this.createNodeList} ref={this.myRef}>
                     {this.props.nodeData.nodes.length > 1 ? '下一步' : '完成'}
                   </Button>
                   <Button className="submitOk customDetail-cancel">取消</Button>
