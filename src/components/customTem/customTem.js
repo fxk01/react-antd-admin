@@ -22,13 +22,18 @@ class CustomTem extends Component {
     super();
     this.state = {
       size: 'large',
-      pagination: {},
+      pagination: {
+        onChange:(page, pageSize) => {
+          this.props.changePageSize(page, pageSize);
+        }
+      },
     }
   }
 
   componentWillReceiveProps(nextProps) {
     const pagination = { ...this.state.pagination };
     pagination.total = nextProps.queryAllTemData.totals;
+    pagination.current = nextProps.current;
     this.setState({
       pagination,
     });
@@ -49,7 +54,6 @@ class CustomTem extends Component {
             columns={this.props.columns}
             loading={this.props.loading}
             dataSource={this.props.queryAllTemData.templates}
-            onChange={(page, pageSize) => this.props.changePageSize(page, pageSize)}
           />
         </div>
       </Content>

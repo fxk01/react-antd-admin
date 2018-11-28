@@ -3,9 +3,15 @@
  */
 
 import React, { Component } from 'react';
-import { Layout, Button } from 'antd';
+import { Layout, Button, message } from 'antd';
 import '../styles/registerRecord.less';
 import Top from '../components/top/top';
+import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
+import {
+  queryDJBATemplate,
+  queryEvents,
+} from '../actions/record-actions';
 import SiderLeft from '../components/siderLeft/siderLeft';
 import SearchConditions from '../components/searchConditions/searchConditions';
 import EventInformation from '../components/eventInformation/eventInformation';
@@ -94,6 +100,30 @@ class RegisterRecord extends Component {
         num: '9',
       }
     };
+    this.recordList = this.recordList.bind(this);
+  }
+
+  componentDidMount() {
+    this.props.queryDJBATemplate();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    let eventIs = nextProps.queryEventData.isFetching !== this.props.queryEventData.isFetching;
+    if(eventIs && nextProps.queryEventData.status === '500') {
+      message.destroy();
+      message.info(nextProps.queryEventData.message, 2.5);
+    }
+  }
+
+  recordList(queryEventData) {
+    let obj = {...queryEventData};
+    obj.nodeIds = obj.nodeIds.substring(0, obj.nodeIds.length - 1);
+    for(let todo in obj) {
+      if(obj[todo] === '') {
+        delete obj[todo];
+      }
+    }
+    this.props.queryEvents(obj);
   }
 
   render() {
@@ -106,7 +136,10 @@ class RegisterRecord extends Component {
             <SiderLeft defaultKeys={this.state.defaultKeys} />
             <Layout style={{padding: '30px 40px 104px 40px'}}>
               <Button type="primary" size={size} className="record-newBn">新建备案</Button>
-              <SearchConditions />
+              <SearchConditions
+                data={this.props.queryBnFwTemData}
+                recordList={this.recordList}
+              />
 
               <EventInformation columns={this.state.columns} data={data} />
             </Layout>
@@ -117,4 +150,22 @@ class RegisterRecord extends Component {
   }
 }
 
-export default RegisterRecord;
+const mapStateToProps = (state) => {
+  return state.recordReducerData
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    queryDJBATemplate: (res) => {
+      dispatch(queryDJBATemplate(res))
+    },
+    queryEvents: (res) => {
+      dispatch(queryEvents(res))
+    },
+  }
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(withRouter(RegisterRecord));

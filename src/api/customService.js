@@ -24,3 +24,13 @@ export const queryAdminList = (params) => {
 export const queryCustList = (params) => {
   return http.fetchPost('cust/queryCustList', params)
 };
+
+//删除模版
+export const deleteTemplate = (params) => {
+  return http.fetchPost('template/deleteTemplate', params)
+};
+
+//生成实例
+export const saveInstance = (params) => {
+  return http.fetchPost('instance/saveInstance', params)
+};

@@ -6,6 +6,7 @@ export const QUERY_ALL_TEMPLATE = 'QUERY_ALL_TEMPLATE';
 export const QUERY_ADMIN = 'QUERY_ADMIN';
 export const QUERY_CUSTLIST = 'QUERY_CUSTLIST';
 export const DELETE_TEMPLATE = 'DELETE_TEMPLATE';
+export const SAVE_INSTANCE = 'SAVE_INSTANCE';
 
 export function queryTemplateByName(data) {
   return function(dispatch) {
@@ -56,6 +57,28 @@ export function queryCustList(data) {
     return customService.queryCustList(data).then((res) => {
       dispatch({
         type: QUERY_CUSTLIST,
+        payload: res,
+      });
+    });
+  }
+}
+
+export function deleteTemplate(data) {
+  return function(dispatch) {
+    return customService.deleteTemplate(data).then((res) => {
+      dispatch({
+        type: DELETE_TEMPLATE,
+        payload: res,
+      });
+    });
+  }
+}
+
+export function saveInstance(data) {
+  return function(dispatch) {
+    return customService.saveInstance(data).then((res) => {
+      dispatch({
+        type: SAVE_INSTANCE,
         payload: res,
       });
     });

@@ -1,4 +1,4 @@
-.record-content {
+.record-content, .useTem {
   background: #fff;
   //padding: 24px 45px 60px 45px;
   margin-top: 40px;
@@ -22,10 +22,12 @@
     background-color: #f8fbfc;
     border-radius: 4px;
     //margin: 0 45px;
-    height: 60px;
+    min-height: 60px;
+    line-height: 60px;
   }
   .search-tj-list ul {
     margin: 0 26px;
+    display: inline-block;
   }
   .search-tj-list ul li {
     width: 80px;
@@ -38,6 +40,13 @@
     font-size: 14px;
     margin-right: 20px;
     cursor: pointer;
+    display: inline-block;
+    border-radius: 2px;
+  }
+  .activeNodesOn {
+    color: #ffffff !important;
+    background-color: #355ee2;
+    border: 1px solid #355ee2 !important;
   }
   .search-tj-list ul li:last-child {
     margin-right: 0;

@@ -12,6 +12,8 @@ import {
   queryAlltemplate,
   queryAdminList,
   queryCustList,
+  deleteTemplate,
+  saveInstance,
 } from '../actions/customService-actions';
 import { logOut } from '../actions/about-actions';
 import hoc from '../utils/hoc';
@@ -21,10 +23,6 @@ import SiderLeft from '../components/siderLeft/siderLeft';
 import CustomTem from '../components/customTem/customTem';
 
 const Option = Select.Option;
-
-function handleChange(value) {
-  console.log(`selected ${value}`);
-}
 
 function CustomList(props) {
   return (
@@ -76,12 +74,12 @@ class CustomService extends Component {
         className: 'record-event-cs',
         title: '操作',
         dataIndex: 'operation',
-        render: () => {
+        render: (text, todo) => {
           return (
             <div>
               <span className="event-xg">复制</span><span className="event-xg event-xg-mp10">|</span>
-              <span className="event-xg">编辑</span><span className="event-xg event-xg-mp10">|</span><span className="event-xg">删除</span>
-              <Button type="primary" className="custom-operation" onClick={this.showModalUse}>使用</Button>
+              <span className="event-xg">编辑</span><span className="event-xg event-xg-mp10">|</span><span className="event-xg" onClick={()=>this.deleteTem(todo.id)}>删除</span>
+              <Button type="primary" className="custom-operation" onClick={()=>this.showModalUse(todo.id)}>使用</Button>
             </div>
           )
         }
@@ -106,14 +104,31 @@ class CustomService extends Component {
       ifTem: false,
       isFetching: false,
       loadingTable: true,
+      current: '',
+      useMakeId: '',
+      admin: {
+        id: '',
+        name: '',
+        realName: ''
+      },
+      company: {
+        id: '',
+        name: ''
+      },
+      fzrVal: '',
+      wrapGs: '',
     };
+    this.fzr = React.createRef();
+    this.slInput = React.createRef();
+    this.wrapGs = React.createRef();
     this.showModal = this.showModal.bind(this);
-    this.showModalUse = this.showModalUse.bind(this);
     this.handleOk = this.handleOk.bind(this);
     this.handleOkUse = this.handleOkUse.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.handleCancelUse = this.handleCancelUse.bind(this);
     this.changePageSize = this.changePageSize.bind(this);
+    this.deleteTem = this.deleteTem.bind(this);
+    this.queryTemInfo = this.queryTemInfo.bind(this);
   }
 
   componentDidMount() {
@@ -126,6 +141,8 @@ class CustomService extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    let deleteIsFetching = this.props.deleteTemData.isFetching !== nextProps.deleteTemData.isFetching;
+    let saveInIsFetching = nextProps.saveInstanceData.isFetching !== this.props.saveInstanceData.isFetching;
     if(this.state.isFetching && nextProps.customServiceData.exist) {
       message.info('模版名称已存在', 2.5);
       this.setState({
@@ -144,6 +161,24 @@ class CustomService extends Component {
         loadingTable: false,
       })
     }
+    if(deleteIsFetching && nextProps.deleteTemData.status === '500') {
+      message.info(nextProps.deleteTemData.message, 2.5);
+    } else if(deleteIsFetching && nextProps.deleteTemData.status === '200') {
+      this.setState({
+        current: 1,
+        loadingTable: true,
+      });
+      this.props.queryAlltemplate({
+        page: 1,
+        pageSize: 10
+      });
+    }
+    if(saveInIsFetching && nextProps.saveInstanceData.status === '200') {
+      let valInputCode = encodeURIComponent(this.slInput.current.input.value);
+      this.props.history.push(`/useTemplate?id=${this.state.useMakeId}&name=${valInputCode}`);
+    } else if(saveInIsFetching && nextProps.saveInstanceData.status === '500') {
+      message.info(nextProps.saveInstanceData.message, 2.5);
+    }
   }
 
   componentWillUnmount() {
@@ -156,8 +191,9 @@ class CustomService extends Component {
     });
   };
 
-  showModalUse() {
+  showModalUse(id) {
     this.setState({
+      useMakeId: id,
       visibleUse: true,
     });
   }
@@ -179,8 +215,62 @@ class CustomService extends Component {
     }
   };
 
-  handleOkUse() {
+  handleChange(value, e, type) {
+    if(type === 'fzr') {
+      this.setState({
+        fzrVal: value,
+        admin: {
+          id: e.key,
+          name: value,
+          realName: e.props['data-name'],
+        }
+      })
+    } else {
+      this.setState({
+        wrapGs: value,
+        company: {
+          id: e.key,
+          name: value,
+        },
+      })
+    }
+  }
 
+  handleOkUse() {
+    const { children } = this.fzr.current.props;
+    const wrapChildren = this.wrapGs.current.props.children;
+    if(this.state.admin.id === '' && this.state.company.id === '') {
+      this.setState({
+        admin: {
+          id: children[0].key,
+          name: children[0].props.value,
+          realName: children[0].props['data-name'],
+        },
+        company: {
+          id: wrapChildren[0].key,
+          name: wrapChildren[0].props.value,
+        }
+      }, () => {
+        if(this.slInput.current.input.value !== '') {
+          this.queryTemInfo();
+        }
+      });
+    }
+    if(this.slInput.current.input.value === '') {
+      message.destroy();
+      message.info('实例名称不能为空！', 2.5);
+    } else if(this.state.admin.id && this.state.company.id) {
+      this.queryTemInfo();
+    }
+  }
+
+  queryTemInfo() {
+    this.props.saveInstance({
+      name: this.slInput.current.input.value,
+      templateId: this.state.useMakeId,
+      admin: JSON.stringify(this.state.admin),
+      company: JSON.stringify(this.state.company),
+    });
   }
 
   handleCancel() {
@@ -191,14 +281,19 @@ class CustomService extends Component {
     this.setState({ visibleUse: false });
   }
 
-  changePageSize(page) {
+  changePageSize(page, pageSize) {
     this.setState({
       loadingTable: true,
+      current: page,
     });
     this.props.queryAlltemplate({
-      page: page.current,
-      pageSize: 10
+      page: page,
+      pageSize: pageSize
     });
+  }
+
+  deleteTem(id) {
+    this.props.deleteTemplate({templateId: id})
   }
 
   getTemValue = this.debounce((e) => {
@@ -228,22 +323,32 @@ class CustomService extends Component {
           ]}
         >
           <div className="flex flex-align-baseline">
-            <p style={{width: '100px', margin: 0}}>模版名称：</p>
-            <Input size="large" placeholder="" onChange={this.getTemValue} />
+            <p style={{width: '100px', margin: 0}}>实例名称：</p>
+            <Input size="large" placeholder="" ref={this.slInput} />
           </div>
           <div className="flex flex-align-baseline" style={{margin: '30px 0'}}>
             <p style={{width: '100px', margin: 0}}>负责人：</p>
-            <Select defaultValue={queryAdminData.admins.length > 0 ? queryAdminData.admins[0].name : ''} style={{width: '100%'}} onChange={handleChange}>
+            <Select
+              dataVal={queryAdminData.admins.length > 0 ? this.state.fzrVal || queryAdminData.admins[0].name : ''}
+              defaultValue={queryAdminData.admins.length > 0 ? queryAdminData.admins[0].name : ''}
+              style={{width: '100%'}}
+              ref={this.fzr}
+              onChange={(value, e)=>this.handleChange(value, e, 'fzr')}>
               {queryAdminData.admins.length > 0 && (
                 queryAdminData.admins.map((todo, index) =>
-                  <Option key={todo.id} value={todo.name}>{todo.name}</Option>
+                  <Option key={todo.id} value={todo.name} data-name={todo['realName']}>{todo.name}</Option>
                 )
               )}
             </Select>
           </div>
           <div className="flex flex-align-baseline">
             <p style={{width: '100px', margin: 0}}>关联公司：</p>
-            <Select defaultValue={queryCustListData.custs.length > 0 ? queryCustListData.custs[0].name : ''} style={{width: '100%'}} onChange={handleChange}>
+            <Select
+              dataVal={queryCustListData.custs.length > 0 ? this.state.wrapGs || queryCustListData.custs[0].name : ''}
+              defaultValue={queryCustListData.custs.length > 0 ? queryCustListData.custs[0].name : ''}
+              style={{width: '100%'}}
+              ref={this.wrapGs}
+              onChange={(value, e)=>this.handleChange(value, e, 'wrap')}>
               {queryCustListData.custs.length > 0 && (
                 queryCustListData.custs.map((todo, index) =>
                   <Option key={todo.id} value={todo.name}>{todo.name}</Option>
@@ -271,12 +376,14 @@ class CustomService extends Component {
             <Input size="large" placeholder="" onChange={this.getTemValue} />
           </div>
         </Modal>
+
         <Layout>
           <Top />
           <Layout>
             <SiderLeft defaultKeys={this.state.defaultKeys} />
             <Layout style={{padding: '30px 40px 104px 40px'}}>
               <CustomTem
+                current={this.state.current}
                 showModal={this.showModal}
                 changePageSize={this.changePageSize}
                 titleText={this.state.titleText}
@@ -309,10 +416,16 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(queryAlltemplate(res))
     },
     queryAdminList: (res) => {
-      dispatch(queryAdminList(res));
+      dispatch(queryAdminList(res))
     },
     queryCustList: (res) => {
       dispatch(queryCustList(res))
+    },
+    deleteTemplate: (res) => {
+      dispatch(deleteTemplate(res))
+    },
+    saveInstance: (res) => {
+      dispatch(saveInstance(res))
     },
     logOut: (res) => {
       dispatch(logOut(res))

@@ -4,11 +4,18 @@
 
 import React, { Component } from 'react';
 import { Layout } from 'antd';
+import hoc from '../utils/hoc';
+import {
+  queryTemplateRefInfo
+} from '../actions/useTemplate-actions';
 import '../styles/registerRecord.less';
+import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
 import Top from '../components/top/top';
 import SiderLeft from '../components/siderLeft/siderLeft';
-import SearchConditions from '../components/searchConditions/searchConditions';
+import UseTem from '../components/useTem/useTem';
 
+@hoc
 class UseTemplate extends Component {
   constructor() {
     super();
@@ -20,6 +27,12 @@ class UseTemplate extends Component {
     };
   }
 
+  componentDidMount() {
+    this.props.queryTemplateRefInfo({
+      templateId: this.getAge('id')
+    });
+  }
+
   render() {
     return (
       <div className="registerRecord useTemplate">
@@ -28,9 +41,10 @@ class UseTemplate extends Component {
           <Layout>
             <SiderLeft defaultKeys={this.state.defaultKeys} />
             <Layout style={{padding: '30px 40px 104px 40px'}}>
-              <SearchConditions />
-
-              {/*<EventInformation columns={this.state.columns} data={data} />*/}
+              <UseTem
+                name={this.getAge('name')}
+                data={this.props.queryTemInstanceData}
+              />
             </Layout>
           </Layout>
         </Layout>
@@ -39,4 +53,18 @@ class UseTemplate extends Component {
   }
 }
 
-export default UseTemplate;
+const mapStateToProps = (state) => {
+  return state.useTemplateReducerData
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    queryTemplateRefInfo: (res) => {
+      dispatch(queryTemplateRefInfo(res))
+    },
+  }
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(withRouter(UseTemplate));

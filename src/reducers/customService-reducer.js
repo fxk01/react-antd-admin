@@ -4,6 +4,8 @@ import {
   QUERY_ALL_TEMPLATE,
   QUERY_ADMIN,
   QUERY_CUSTLIST,
+  DELETE_TEMPLATE,
+  SAVE_INSTANCE,
 } from '../actions/customService-actions';
 
 const initialState = {
@@ -18,6 +20,12 @@ const initialState = {
   },
   queryCustListData: {
     custs: [],
+  },
+  deleteTemData: {
+    isFetching: false
+  },
+  saveInstanceData: {
+    isFetching: false,
   }
 };
 
@@ -53,6 +61,22 @@ export default function(state = initialState, action) {
       return {
         ...state,
         queryCustListData: Object.assign({}, state.queryCustListData, action.payload)
+      }
+    }
+    case DELETE_TEMPLATE: {
+      return {
+        ...state,
+        deleteTemData: Object.assign({}, state.deleteTemData, action.payload, {
+          isFetching: !state.deleteTemData.isFetching,
+        })
+      }
+    }
+    case SAVE_INSTANCE: {
+      return {
+        ...state,
+        saveInstanceData: Object.assign({}, state.saveInstanceData, action.payload, {
+          isFetching: !state.saveInstanceData.isFetching,
+        })
       }
     }
     default:
